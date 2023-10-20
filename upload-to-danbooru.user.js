@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Upload To Danbooru
 // @author       hdk5
-// @version      20231019191126
+// @version      20231020044527
 // @description  another userscript for uploading to danbooru
 // @homepageURL  https://github.com/hdk5/upload-to-danbooru.user.js
 // @supportURL   https://github.com/hdk5/upload-to-danbooru.user.js/issues
@@ -194,11 +194,23 @@ function initializeFantia() {
 
 function initializeMisskey() {
   // Add the button to reactions row
+
+  // Timeline
+  // User notes
   findAndAttach({
     selector: "article.x5yeR",
-    predicate: ".xjptQ article.x5yeR",
+    predicate: ".xvu6Q article.x5yeR",
     asyncMode: true,
     toUrl: async (el) => $(el).find(".xAtlm a").prop("href"),
+    callback: async ($el, $btn) => $el.find(".xlT1y").prepend($btn),
+  });
+
+  // Note
+  findAndAttach({
+    selector: "article.xexC6",
+    predicate: ".xvu6Q article.xexC6",
+    asyncMode: true,
+    toUrl: async (el) => $(el).find(".xi1ty a").prop("href"),
     callback: async ($el, $btn) => $el.find(".xlT1y").prepend($btn),
   });
 }
