@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Upload To Danbooru
 // @author       hdk5
-// @version      20231020044527
+// @version      20231020125901
 // @description  another userscript for uploading to danbooru
 // @homepageURL  https://github.com/hdk5/upload-to-danbooru.user.js
 // @supportURL   https://github.com/hdk5/upload-to-danbooru.user.js/issues
