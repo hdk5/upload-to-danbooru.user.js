@@ -107,7 +107,8 @@ function generateUploadUrl(url, ref) {
 function findAndAttach(options) {
   const fullOptions = {
     selector: null,
-    asyncMode: false,
+    asyncAttach: false,
+    asyncClick: false,
     predicate: (el) => true,
     classes: [],
     toUrl: async (el) => $(el).closest("a").prop("href"),
@@ -124,27 +125,6 @@ function findAndAttach(options) {
   const attach = async (el) => {
     if (!fullOptions.predicate(el)) return;
 
-    let ready = true;
-    const onclick = async (ev) => {
-      if (!ready) return;
-      if (![0, 1].includes(ev.button)) return;
-
-      ready = false;
-      $btn.css("cursor", "wait");
-
-      try {
-        const url = await fullOptions.toUrl(el);
-        const ref = await fullOptions.toRef(el);
-        const uploadUrl = generateUploadUrl(url, ref);
-        GM_openInTab(uploadUrl, { active: ev.button === 0, setParent: true });
-      } catch (err) {
-        console.error(err);
-      }
-
-      $btn.css("cursor", "");
-      ready = true;
-    };
-
     const $el = $(el);
     const $btn = $(noIndents`
       <a class="ex-utb-upload-button">
@@ -154,20 +134,53 @@ function findAndAttach(options) {
           src="${GM_getResourceURL("danbooru_icon")}">
       </a>
     `);
-    $btn.on("click", onclick);
-    $btn.on("auxclick", onclick);
-
-    // Prevent middle-click autoscroll
-    $btn.on("mousedown", (e) => e.preventDefault());
 
     fullOptions.classes.forEach((clazz) => $btn.addClass(clazz));
+
+    const fetchUploadUrl = async () => {
+      const url = await fullOptions.toUrl(el);
+      const ref = await fullOptions.toRef(el);
+      return generateUploadUrl(url, ref);
+    };
+
+    if (fullOptions.asyncClick) {
+      let ready = true;
+      const onclick = async (ev) => {
+        if (!ready) return;
+        if (![0, 1].includes(ev.button)) return;
+
+        ready = false;
+        $btn.css("cursor", "wait");
+
+        try {
+          GM_openInTab(await fetchUploadUrl(), {
+            active: ev.button === 0,
+            setParent: true,
+          });
+        } catch (err) {
+          console.error(err);
+        }
+
+        $btn.css("cursor", "");
+        ready = true;
+      };
+
+      $btn.on("click", onclick);
+      $btn.on("auxclick", onclick);
+
+      // Prevent middle-click autoscroll
+      $btn.on("mousedown", (e) => e.preventDefault());
+    } else {
+      $btn.attr("href", await fetchUploadUrl());
+      $btn.attr("target", "_blank");
+    }
 
     await fullOptions.callback($el, $btn);
   };
 
   $(fullOptions.selector).each((i, el) => attach(el));
 
-  if (!fullOptions.asyncMode) return;
+  if (!fullOptions.asyncAttach) return;
 
   new MutationSummary({
     rootNode: document.body,
@@ -210,7 +223,8 @@ function initializeFantia() {
     predicate: (el) =>
       el.href && regexs.some((regex) => regex.test(new URL(el.href).pathname)),
     classes: ["ex-utb-upload-button-absolute"],
-    asyncMode: true,
+    asyncAttach: true,
+    asyncClick: true,
     toUrl: async (el) => (await fetch(el.href)).url,
     callback: async ($el, $btn) => $btn.insertBefore($el),
   });
@@ -224,7 +238,7 @@ function initializeMisskey() {
   findAndAttach({
     selector: "article.x5yeR",
     predicate: ".xvu6Q article.x5yeR",
-    asyncMode: true,
+    asyncAttach: true,
     toUrl: async (el) => $(el).find(".xAtlm a").prop("href"),
     callback: async ($el, $btn) => $el.find(".xlT1y").prepend($btn),
   });
@@ -233,7 +247,7 @@ function initializeMisskey() {
   findAndAttach({
     selector: "article.xexC6",
     predicate: ".xvu6Q article.xexC6",
-    asyncMode: true,
+    asyncAttach: true,
     toUrl: async (el) => $(el).find(".xi1ty a").prop("href"),
     callback: async ($el, $btn) => $el.find(".xlT1y").prepend($btn),
   });
@@ -248,7 +262,7 @@ function initializePixiv() {
       "ex-utb-upload-button-absolute",
       "ex-utb-upload-button-bottom-left",
     ],
-    asyncMode: true,
+    asyncAttach: true,
     callback: async ($el, $btn) => $btn.insertBefore($el),
   });
 }
