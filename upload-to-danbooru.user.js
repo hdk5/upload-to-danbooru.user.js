@@ -15,6 +15,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
+// @grant        GM_openInTab
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js
 // @require      https://raw.githubusercontent.com/rafaelw/mutation-summary/421110f84178aa9e4098b38df83f727e5aea3d97/src/mutation-summary.js
 // @require      https://raw.githubusercontent.com/sizzlemctwizzle/GM_config/06f2015c04db3aaab9717298394ca4f025802873/gm_config.js
@@ -123,19 +124,42 @@ function findAndAttach(options) {
   const attach = async (el) => {
     if (!fullOptions.predicate(el)) return;
 
-    const url = await fullOptions.toUrl(el);
-    const ref = await fullOptions.toRef(el);
-    const uploadUrl = generateUploadUrl(url, ref);
+    let ready = true;
+    const onclick = async (ev) => {
+      if (!ready) return;
+      if (![0, 1].includes(ev.button)) return;
+
+      ready = false;
+      $btn.css("cursor", "wait");
+
+      try {
+        const url = await fullOptions.toUrl(el);
+        const ref = await fullOptions.toRef(el);
+        const uploadUrl = generateUploadUrl(url, ref);
+        GM_openInTab(uploadUrl, { active: ev.button === 0, setParent: true });
+      } catch (err) {
+        console.error(err);
+      }
+
+      $btn.css("cursor", "");
+      ready = true;
+    };
 
     const $el = $(el);
     const $btn = $(noIndents`
-      <a href="${uploadUrl}" class="ex-utb-upload-button">
+      <a class="ex-utb-upload-button">
         <img 
           class="ex-utb-upload-button-icon"
           title="Upload to Danbooru"
           src="${GM_getResourceURL("danbooru_icon")}">
       </a>
     `);
+    $btn.on("click", onclick);
+    $btn.on("auxclick", onclick);
+
+    // Prevent middle-click autoscroll
+    $btn.on("mousedown", (e) => e.preventDefault());
+
     fullOptions.classes.forEach((clazz) => $btn.addClass(clazz));
 
     await fullOptions.callback($el, $btn);
