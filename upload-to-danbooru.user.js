@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Upload To Danbooru
 // @author       hdk5
-// @version      20231020125901
+// @version      20231021223433
 // @description  another userscript for uploading to danbooru
 // @homepageURL  https://github.com/hdk5/upload-to-danbooru.user.js
 // @supportURL   https://github.com/hdk5/upload-to-danbooru.user.js/issues
@@ -10,6 +10,7 @@
 // @match        *://fantia.jp/*
 // @match        *://misskey.io/*
 // @match        *://www.pixiv.net/*
+// @match        *://nijie.info/*
 // @grant        GM_addStyle
 // @grant        GM_getResourceURL
 // @grant        GM_getValue
@@ -267,6 +268,24 @@ function initializePixiv() {
   });
 }
 
+function initializeNijie() {
+  GM_addStyle(`
+    .ex-utb-upload-button-icon {
+      border: unset !important;
+      padding: unset !important;
+    }
+  `);
+
+  // Post thumbnails
+  findAndAttach({
+    selector: ".nijiedao",
+    classes: ["ex-utb-upload-button-absolute"],
+    asyncAttach: true,
+    toUrl: async (el) => $(el).find("a").prop("href"),
+    callback: async ($el, $btn) => $el.prepend($btn),
+  });
+}
+
 function initialize() {
   GM_addStyle(PROGRAM_CSS);
 
@@ -279,6 +298,9 @@ function initialize() {
       break;
     case "www.pixiv.net":
       initializePixiv();
+      break;
+    case "nijie.info":
+      initializeNijie();
       break;
   }
 }
