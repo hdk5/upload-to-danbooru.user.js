@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Upload To Danbooru
 // @author       hdk5
-// @version      20231030134050
+// @version      20231030160043
 // @description  another userscript for uploading to danbooru
 // @homepage     https://github.com/hdk5/upload-to-danbooru.user.js
 // @homepageURL  https://github.com/hdk5/upload-to-danbooru.user.js
@@ -298,6 +298,14 @@ function initializeTwitter() {
       margin: unset;
       margin-inline-end: 12px;
       display: flex;
+      align-self: center;
+      background: none;
+    }
+
+    .ex-utb-upload-button:hover {
+      background: rgba(127,127,127,0.5);
+      box-shadow: 0 0 0 9px rgba(127,127,127,0.5);
+      border-radius: 9px;
     }
   `);
 
