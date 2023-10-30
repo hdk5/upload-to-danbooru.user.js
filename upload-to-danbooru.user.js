@@ -44,6 +44,10 @@ GM_registerMenuCommand("Settings", () => {
 
 const PROGRAM_CSS = `
 .ex-utb-upload-button {
+  display: inline-flex;
+  align-self: center;
+  align-items: center;
+  vertical-align: middle;
   margin: 5px;
   padding: 5px;
   cursor: pointer;
@@ -59,7 +63,6 @@ const PROGRAM_CSS = `
 
 .ex-utb-upload-button-absolute {
   position: absolute;
-  display: inline-block;
   z-index: 1;
 }
 
@@ -297,8 +300,6 @@ function initializeTwitter() {
       padding: unset;
       margin: unset;
       margin-inline-end: 12px;
-      display: flex;
-      align-self: center;
       background: none;
     }
 
