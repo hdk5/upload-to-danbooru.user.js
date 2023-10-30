@@ -3,6 +3,7 @@
 // @author       hdk5
 // @version      20231025162442
 // @description  another userscript for uploading to danbooru
+// @homepage     https://github.com/hdk5/upload-to-danbooru.user.js
 // @homepageURL  https://github.com/hdk5/upload-to-danbooru.user.js
 // @supportURL   https://github.com/hdk5/upload-to-danbooru.user.js/issues
 // @updateURL    https://github.com/hdk5/upload-to-danbooru.user.js/raw/master/upload-to-danbooru.user.js
@@ -77,12 +78,12 @@ function noIndents(strings, ...values) {
   // Remove all spaces before/after a tag and leave one in other cases
   const compactStrings = strings.map((str) =>
     str.replace(/(>)?\n *(<)?/g, (s, lt, gt) =>
-      lt && gt ? lt + gt : lt || gt ? lt || gt : " "
-    )
+      lt && gt ? lt + gt : lt || gt ? lt || gt : " ",
+    ),
   );
 
   const res = new Array(values.length * 2 + 1);
-  // eslint-disable-next-line unicorn/no-for-loop
+
   for (let i = 0; i < values.length; i++) {
     res[i * 2] = compactStrings[i];
     res[i * 2 + 1] = values[i];
@@ -204,14 +205,14 @@ function initializeFantia() {
       el.src &&
       /^\/posts\/\d+/.test(new URL(window.location).pathname) &&
       /^\/uploads\/post_content_photo\/file\/\d+\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.\w+$/.test(
-        new URL(el.src).pathname
+        new URL(el.src).pathname,
       ),
     classes: ["ex-utb-upload-button-absolute"],
     toUrl: async (el) => el.src,
     toRef: async (el) =>
       new URL(
         /^\/posts\/\d+/.exec(new URL(window.location).pathname)[0],
-        window.location
+        window.location,
       ).href,
     callback: async ($el, $btn) => $btn.insertBefore($el),
   });
