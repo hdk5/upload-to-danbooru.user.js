@@ -131,10 +131,10 @@ function findAndAttach(options) {
 
   const attach = async (el) => {
     if (!fullOptions.predicate(el)) return;
+    if (el.hasAttribute("ex-utb")) return;
+    el.setAttribute("ex-utb", "");
 
     const $el = $(el);
-    if ($el.find(".ex-utb-upload-button").length) return;
-
     const $btn = $(noIndents`
       <a class="ex-utb-upload-button">
         <img 
