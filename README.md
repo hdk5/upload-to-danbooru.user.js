@@ -4,9 +4,11 @@
 
 ## Installation
 
-* Install [Tampermonkey](https://tampermonkey.net/) extension, it's available for Chrome, Microsoft Edge, Safari, Opera Next, and Firefox.
-* Download the script: https://github.com/hdk5/upload-to-danbooru.user.js/raw/master/upload-to-danbooru.user.js
+* Install [Tampermonkey](https://tampermonkey.net/) extension, it's available for Firefox, Safari and Chromium-based browsers.
+* Download the [script](https://github.com/hdk5/upload-to-danbooru.user.js/raw/master/upload-to-danbooru.user.js).
 * An installation prompt will appear. Accept the installation.
+
+_The userscript is confirmed to work only on latest Firefox + latest Tampermonkey. Other browsers and userscript managers are not tested._
 
 ## Why not use the official extension?
 
@@ -20,6 +22,10 @@ Unlike the extension, which aims to be lightweight and universal, this one does 
     * Adds the upload button on post thumbnails
     * Extension's context menu action uploads only the first image in the set
     * Works with the extension's address bar action, but each post has to be opened in new tab
+
+* Twitter
+    * Adds the upload button near bookmark button on each tweet
+    * Works with the extension's address bar action, but each tweet has to be opened in new tab
 
 * Nijie
     * Adds the upload button on post thumbnails
