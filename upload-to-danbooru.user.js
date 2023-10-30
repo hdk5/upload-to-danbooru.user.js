@@ -12,6 +12,8 @@
 // @match        *://misskey.io/*
 // @match        *://www.pixiv.net/*
 // @match        *://nijie.info/*
+// @match        *://twitter.com/*
+// @match        *://x.com/*
 // @grant        GM_addStyle
 // @grant        GM_getResourceURL
 // @grant        GM_getValue
@@ -289,6 +291,25 @@ function initializeNijie() {
   });
 }
 
+function initializeTwitter() {
+  GM_addStyle(`
+    .ex-utb-upload-button {
+      padding: unset;
+      margin: unset;
+      margin-inline-end: 12px;
+      display: flex;
+    }
+  `);
+
+  findAndAttach({
+    selector: "article",
+    predicate: "article[data-testid=tweet]",
+    asyncAttach: true,
+    toUrl: async (el) => $(el).find("time").closest("a").prop("href"),
+    callback: async ($el, $btn) => $el.find("div[role=group]").append($btn),
+  });
+}
+
 function initialize() {
   GM_addStyle(PROGRAM_CSS);
 
@@ -305,6 +326,9 @@ function initialize() {
     case "nijie.info":
       initializeNijie();
       break;
+    case "twitter.com":
+    case "x.com":
+      initializeTwitter();
   }
 }
 
