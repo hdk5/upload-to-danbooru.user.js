@@ -111,6 +111,18 @@ function generateUploadUrl(url, ref) {
   return uploadUrl.href;
 }
 
+function parseHtml(text, baseHref) {
+  if (baseHref === undefined) {
+    baseHref = new URL("/", window.location).href;
+  }
+
+  let document = new DOMParser().parseFromString(text, "text/html");
+  let base = document.createElement("base");
+  base.href = baseHref;
+  document.head.appendChild(base);
+  return document;
+}
+
 function findAndAttach(options) {
   const fullOptions = {
     selector: null,
@@ -137,7 +149,7 @@ function findAndAttach(options) {
     const $el = $(el);
     const $btn = $(noIndents`
       <a class="ex-utb-upload-button">
-        <img 
+        <img
           class="ex-utb-upload-button-icon"
           title="Upload to Danbooru"
           src="${GM_getResourceURL("danbooru_icon")}">
@@ -203,40 +215,65 @@ function initializeFantia() {
   // 2. album_image (e.g. https://fantia.jp/posts/2293136)
   // 3. download  (e.g. https://fantia.jp/posts/61560)
 
-  // 1
-  findAndAttach({
-    selector: "img",
-    predicate: (el) =>
-      el.src &&
-      /^\/posts\/\d+/.test(new URL(window.location).pathname) &&
-      /^\/uploads\/post_content_photo\/file\/\d+\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.\w+$/.test(
-        new URL(el.src).pathname,
-      ),
-    classes: ["ex-utb-upload-button-absolute"],
-    toUrl: async (el) => el.src,
-    toRef: async (el) =>
-      new URL(
-        /^\/posts\/\d+/.exec(new URL(window.location).pathname)[0],
-        window.location,
-      ).href,
-    callback: async ($el, $btn) => $btn.insertBefore($el),
-  });
+  const postUrlMatch = /^\/posts\/\d+/.exec(new URL(window.location).pathname);
+  if (postUrlMatch) {
+    const ref = new URL(postUrlMatch[0], window.location).href;
+    const toRef = async () => ref;
 
-  // 2, 3
-  const regexs = [
-    /^\/posts\/\d+\/download\/\d+$/,
-    /^\/posts\/\d+\/album_image$/,
-  ];
-  findAndAttach({
-    selector: "a",
-    predicate: (el) =>
-      el.href && regexs.some((regex) => regex.test(new URL(el.href).pathname)),
-    classes: ["ex-utb-upload-button-absolute"],
-    asyncAttach: true,
-    asyncClick: true,
-    toUrl: async (el) => (await fetch(el.href)).url,
-    callback: async ($el, $btn) => $btn.insertBefore($el),
-  });
+    // 1 - original image
+    findAndAttach({
+      selector: "img",
+      predicate: (el) =>
+        el.src &&
+        /^\/uploads\/post_content_photo\/file\/\d+\/(?!(?:main|thumb)_)/.test(
+          new URL(el.src).pathname,
+        ),
+      classes: ["ex-utb-upload-button-absolute"],
+      toUrl: async (el) => el.src,
+      toRef: toRef,
+      callback: async ($el, $btn) => $btn.insertBefore($el),
+    });
+
+    // 1 - thumbnail
+    findAndAttach({
+      selector: "img",
+      predicate: (el) =>
+        el.src &&
+        /^\/uploads\/post_content_photo\/file\/\d+\/(?:(?:main|thumb)_)/.test(
+          new URL(el.src).pathname,
+        ),
+      classes: ["ex-utb-upload-button-absolute"],
+      asyncAttach: true,
+      asyncClick: true,
+      toUrl: async (el) => {
+        const fileId = /\/(\d+)\//.exec(new URL(el.src).pathname)[1];
+        const imagePageUrl = `${ref}/post_content_photo/${fileId}`;
+        const imagePageResponse = await fetch(imagePageUrl);
+        const imagePageHtml = await imagePageResponse.text();
+        const imagePageDom = parseHtml(imagePageHtml);
+        return $(imagePageDom).find("img").prop("src");
+      },
+      toRef: toRef,
+      callback: async ($el, $btn) =>
+        $btn.insertBefore($el.closest(".image-container")),
+    });
+
+    // 2, 3
+    findAndAttach({
+      selector: "a",
+      predicate: (el) =>
+        el.href &&
+        [/^\/posts\/\d+\/download\/\d+$/, /^\/posts\/\d+\/album_image$/].some(
+          (regex) => regex.test(new URL(el.href).pathname),
+        ),
+      classes: ["ex-utb-upload-button-absolute"],
+      asyncAttach: true,
+      asyncClick: true,
+      toUrl: async (el) => (await fetch(el.href)).url,
+      toRef: toRef,
+      callback: async ($el, $btn) => $btn.insertBefore($el),
+    });
+  }
 }
 
 function initializeMisskey() {
