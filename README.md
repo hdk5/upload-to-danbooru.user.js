@@ -34,10 +34,9 @@ Unlike the extension, which aims to be lightweight and universal, this one does 
 
 * Fantia
     * `post_content_photo` type
-        * Adds the upload button to full-size image page
+        * Adds the upload button to full-size image page and post thumbnails
         * Sends the direct image url with post url as referer
-        * Currently _almost_ works with the extension, but danbooru doesn't recognize the referer (at the moment) - which I don't like.
-        * The full-size image page still has to be opened manually
+        * Somewhat works with the extension (danbooru doesn't recognize the referer, full size image have to be opened manually)
 
     * `album_image` type
         * Adds the upload button on the image in the article
