@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Upload To Danbooru
 // @author       hdk5
-// @version      20231030223521
+// @version      20231103052904
 // @description  another userscript for uploading to danbooru
 // @homepage     https://github.com/hdk5/upload-to-danbooru.user.js
 // @homepageURL  https://github.com/hdk5/upload-to-danbooru.user.js
@@ -72,7 +72,6 @@ const PROGRAM_CSS = `
 }
 
 .ex-utb-upload-button-icon {
-  width: 1.2em;
   height: 1.2em;
   vertical-align: middle;
 }
@@ -278,6 +277,11 @@ function initializeFantia() {
 
 function initializeMisskey() {
   // Add the button to reactions row
+  GM_addStyle(`
+    .ex-utb-upload-button-icon {
+      height: 1.5em;
+    }
+  `);
 
   // Timeline
   // User notes
@@ -336,14 +340,37 @@ function initializeTwitter() {
     .ex-utb-upload-button {
       padding: unset;
       margin: unset;
-      margin-inline-end: 12px;
+      margin-inline-start: 12px;
       background: none;
+      position: relative;
+      order: 9999;
     }
 
     .ex-utb-upload-button:hover {
-      background: rgba(127,127,127,0.5);
-      box-shadow: 0 0 0 9px rgba(127,127,127,0.5);
-      border-radius: 9px;
+      background: unset;
+    }
+
+    .ex-utb-upload-button-icon {
+      height: 1.25em;
+    }
+
+    /* probably tweet page */
+    article[tabindex="-1"] .ex-utb-upload-button-icon {
+      height: 1.5em;
+    }
+
+    .ex-utb-upload-button-twitter-hover {
+      border-radius: 9999px;
+      position: absolute;
+      top: 0px;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      margin: -8px;
+    }
+
+    .ex-utb-upload-button-twitter-hover:hover {
+      background: rgba(174,137,102,0.15);
     }
   `);
 
@@ -352,7 +379,10 @@ function initializeTwitter() {
     predicate: "article[data-testid=tweet]",
     asyncAttach: true,
     toUrl: async (el) => $(el).find("time").closest("a").prop("href"),
-    callback: async ($el, $btn) => $el.find("div[role=group]").append($btn),
+    callback: async ($el, $btn) => {
+      $btn.append("<div class='ex-utb-upload-button-twitter-hover'>");
+      $el.find("div[role=group]").append($btn);
+    },
   });
 }
 
