@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Upload To Danbooru
 // @author       hdk5
-// @version      20231103052904
+// @version      20231103131608
 // @description  another userscript for uploading to danbooru
 // @homepage     https://github.com/hdk5/upload-to-danbooru.user.js
 // @homepageURL  https://github.com/hdk5/upload-to-danbooru.user.js
@@ -14,6 +14,7 @@
 // @match        *://nijie.info/*
 // @match        *://twitter.com/*
 // @match        *://x.com/*
+// @match        *://ci-en.dlsite.com/*
 // @grant        GM_addStyle
 // @grant        GM_getResourceURL
 // @grant        GM_getValue
@@ -386,6 +387,17 @@ function initializeTwitter() {
   });
 }
 
+function initializeCien() {
+  findAndAttach({
+    selector: "img.file-player-image",
+    predicate: "img.file-player-image[data-raw]",
+    classes: ["ex-utb-upload-button-absolute"],
+    asyncAttach: true,
+    toUrl: async (el) => $(el).attr("data-raw"),
+    callback: async ($el, $btn) => $btn.insertBefore($el),
+  });
+}
+
 function initialize() {
   GM_addStyle(PROGRAM_CSS);
 
@@ -405,6 +417,8 @@ function initialize() {
     case "twitter.com":
     case "x.com":
       initializeTwitter();
+    case "ci-en.dlsite.com":
+      initializeCien();
   }
 }
 
