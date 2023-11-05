@@ -48,6 +48,10 @@ Unlike the extension, which aims to be lightweight and universal, this one does 
         * Sends the direct media url with post url as referer
         * Same as the previous, doen't work with the extension
 
+* Ci-En
+    * Adds the upload button to post thumbnails
+    * Not supported by Danbooru yet (i.e. copy artist commentary manually)
+
 * Misskey
     * Adds the upload button to reactions row on each tweet
     * Works with the extension's address bar action, but each tweet has to be opened in new tab
