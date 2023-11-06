@@ -1,3 +1,8 @@
+# Notice
+
+Moved to a [new repo](https://github.com/hdk5/danbooru.user.js)<br>
+This script won't be updated here anymore
+
 # upload-to-danbooru.user.js
 
 (Another) userscript for uploading to Danbooru.

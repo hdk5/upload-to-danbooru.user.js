@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Upload To Danbooru
 // @author       hdk5
-// @version      20231105164017
+// @version      20231105164019
 // @description  another userscript for uploading to danbooru
 // @homepage     https://github.com/hdk5/upload-to-danbooru.user.js
 // @homepageURL  https://github.com/hdk5/upload-to-danbooru.user.js
 // @supportURL   https://github.com/hdk5/upload-to-danbooru.user.js/issues
-// @updateURL    https://github.com/hdk5/upload-to-danbooru.user.js/raw/master/upload-to-danbooru.user.js
-// @downloadURL  https://github.com/hdk5/upload-to-danbooru.user.js/raw/master/upload-to-danbooru.user.js
+// @updateURL    https://github.com/hdk5/danbooru.user.js/raw/master/dist/upload-to-danbooru.user.js
+// @downloadURL  https://github.com/hdk5/danbooru.user.js/raw/master/dist/upload-to-danbooru.user.js
 // @match        *://fantia.jp/*
 // @match        *://misskey.io/*
 // @match        *://www.pixiv.net/*
@@ -26,6 +26,10 @@
 // @require      https://raw.githubusercontent.com/sizzlemctwizzle/GM_config/06f2015c04db3aaab9717298394ca4f025802873/gm_config.js
 // @resource     danbooru_icon https://raw.githubusercontent.com/danbooru/danbooru/0fd95375fac5cc036ff0141c3987abb0a03991b7/public/images/danbooru-logo.png
 // ==/UserScript==
+
+// Moved to a new repo
+// This script won't be updated here anymore
+// https://github.com/hdk5/danbooru.user.js
 
 GM_config.init({
   id: "UtdConfig",
